@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <h1 class="text-2xl font-bold">📦 Carga Inicial de Inventario</h1>
+    <p class="text-gray-500">Registra la cantidad inicial de cada producto (una sola vez).</p>
+
+    {% if productos_sin_inicial %}
+    <div class="card-gol p-4">
+        <h2 class="font-semibold mb-3">Productos sin inventario inicial</h2>
+        <form method="POST" class="space-y-3">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Producto</label>
+                    <select name="producto_id" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4a843]">
+                        <option value="">Seleccionar…</option>
+                        {% for p in productos_sin_inicial %}
+                        <option value="{{ p.id }}">{{ icono_categoria(p.categoria) }} {{ p.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Cantidad</label>
+                    <input type="number" name="cantidad" step="0.01" min="0" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4a843]">
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="btn-dorado w-full">Registrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if productos_con_inicial %}
+    <div class="card-gol p-4">
+        <h2 class="font-semibold mb-3">✅ Productos con inventario inicial</h2>
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                    <th class="text-left px-3 py-2">Producto</th>
+                    <th class="text-right px-3 py-2">Cantidad</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for p in productos_con_inicial %}
+                <tr>
+                    <td class="px-3 py-2">{{ icono_categoria(p.categoria) }} {{ p.nombre }}</td>
+                    <td class="px-3 py-2 text-right">{{ p.inventarios_iniciales[0].cantidad }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <a href="/reportes" class="text-sm text-[#d4a843] hover:underline">← Reportes</a>
+    <h1 class="text-2xl font-bold">📦 Inventario Actual</h1>
+
+    <div class="card-gol">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                    <th class="text-left px-4 py-3">Producto</th>
+                    <th class="text-left px-4 py-3">Categoría</th>
+                    <th class="text-left px-4 py-3">Unidad</th>
+                    <th class="text-right px-4 py-3">Stock esperado</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for d in stock_data %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 font-medium">{{ icono_categoria(d.producto.categoria) }} {{ d.producto.nombre }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ d.producto.categoria }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ d.producto.unidad_medida }}</td>
+                    <td class="px-4 py-3 text-right font-bold">{{ d.stock_esperado }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

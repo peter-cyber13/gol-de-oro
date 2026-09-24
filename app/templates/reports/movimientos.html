@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <a href="/reportes" class="text-sm text-[#d4a843] hover:underline">← Reportes</a>
+    <h1 class="text-2xl font-bold">📈 Movimientos: {{ producto.nombre }}</h1>
+    <p class="text-gray-500">{{ desde }} → {{ hasta }}</p>
+
+    {% if pedidos %}
+    <div class="card-gol p-4">
+        <h2 class="font-semibold mb-2">🧾 Salidas (Ventas)</h2>
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr><th class="text-left px-3 py-2">Fecha/Hora</th><th class="text-left px-3 py-2">Folio</th><th class="text-right px-3 py-2">Cantidad</th></tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for d in pedidos %}
+                <tr><td class="px-3 py-2">{{ d.pedido.fecha }} {{ formatear_hora(d.pedido.hora) }}</td><td class="px-3 py-2">{{ d.pedido.folio }}</td><td class="px-3 py-2 text-right">−{{ d.cantidad }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if compras %}
+    <div class="card-gol p-4">
+        <h2 class="font-semibold mb-2">🛒 Entradas (Compras)</h2>
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr><th class="text-left px-3 py-2">Fecha</th><th class="text-left px-3 py-2">Proveedor</th><th class="text-right px-3 py-2">Cantidad</th></tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for d in compras %}
+                <tr><td class="px-3 py-2">{{ d.compra.fecha }}</td><td class="px-3 py-2">{{ d.compra.proveedor or '—' }}</td><td class="px-3 py-2 text-right text-green-600">+{{ d.cantidad }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if inventarios %}
+    <div class="card-gol p-4">
+        <h2 class="font-semibold mb-2">📊 Inventarios diarios</h2>
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr><th class="text-left px-3 py-2">Fecha</th><th class="text-right px-3 py-2">Cantidad física</th><th class="text-right px-3 py-2">Esperado</th><th class="text-right px-3 py-2">Dif.</th></tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for i in inventarios %}
+                <tr><td class="px-3 py-2">{{ i.fecha }}</td><td class="px-3 py-2 text-right">{{ i.cantidad_fisica }}</td><td class="px-3 py-2 text-right">—</td><td class="px-3 py-2 text-right">—</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if not pedidos and not compras and not inventarios %}
+    <div class="bg-white rounded-xl p-8 text-center border border-gray-200"><p class="text-gray-400">Sin movimientos para este producto en el período</p></div>
+    {% endif %}
+</div>
+{% endblock %}

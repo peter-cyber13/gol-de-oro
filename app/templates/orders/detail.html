@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block extra_head %}
+<style>
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 40; align-items: center; justify-content: center; }
+.modal-overlay.active { display: flex; }
+.modal-content { background: white; border-radius: 1rem; padding: 1.5rem; max-width: 32rem; width: 90%; max-height: 80vh; overflow-y: auto; }
+</style>
+<script>
+let editCarrito = [];
+
+{% if pedido.detalles %}
+{% for d in pedido.detalles %}
+editCarrito.push({ id: {{ d.producto.id }}, nombre: '{{ d.producto.nombre|replace("'", "\\'") }}', cantidad: {{ d.cantidad }} });
+{% endfor %}
+{% endif %}
+
+function abrirModalEdicion() {
+    document.getElementById('modal-edicion').classList.add('active');
+    renderEditCarrito();
+}
+
+function cerrarModalEdicion() {
+    document.getElementById('modal-edicion').classList.remove('active');
+}
+
+function agregarEditProducto(id, nombre) {
+    const existente = editCarrito.find(p => p.id === id);
+    if (existente) {
+        existente.cantidad++;
+    } else {
+        editCarrito.push({ id, nombre, cantidad: 1 });
+    }
+    renderEditCarrito();
+}
+
+function cambiarEditCantidad(id, delta) {
+    const p = editCarrito.find(p => p.id === id);
+    if (!p) return;
+    p.cantidad = Math.max(1, p.cantidad + delta);
+    renderEditCarrito();
+}
+
+function eliminarEditProducto(id) {
+    editCarrito = editCarrito.filter(p => p.id !== id);
+    renderEditCarrito();
+}
+
+function renderEditCarrito() {
+    const cont = document.getElementById('edit-carrito-contenido');
+    if (editCarrito.length === 0) {
+        cont.innerHTML = '<p class="text-gray-400 text-center py-4">Sin productos</p>';
+        return;
+    }
+    let html = '';
+    editCarrito.forEach(p => {
+        html += `<div class="flex items-center justify-between py-2 border-b border-gray-100">
+            <span class="font-medium">${p.nombre}</span>
+            <div class="flex items-center gap-2">
+                <button onclick="cambiarEditCantidad(${p.id}, -1)" class="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300">−</button>
+                <span class="font-bold w-8 text-center">${p.cantidad}</span>
+                <button onclick="cambiarEditCantidad(${p.id}, 1)" class="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300">+</button>
+                <button onclick="eliminarEditProducto(${p.id})" class="text-red-400 hover:text-red-600 ml-2">✕</button>
+            </div>
+        </div>`;
+    });
+    cont.innerHTML = html;
+}
+
+function enviarSolicitud() {
+    if (editCarrito.length === 0) {
+        alert('Agrega al menos un producto.');
+        return;
+    }
+    const btn = document.getElementById('btn-solicitar');
+    btn.disabled = true;
+    btn.textContent = '⏳ Enviando...';
+
+    fetch('/pedidos/{{ pedido.id }}/editar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            productos: editCarrito.map(p => ({ id: p.id, cantidad: p.cantidad }))
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Solicitud enviada. El encargado la revisará.');
+            cerrarModalEdicion();
+        } else {
+            alert('❌ ' + (data.error || 'Error al enviar solicitud'));
+        }
+    })
+    .catch(e => {
+        alert('❌ Error de conexión');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.textContent = '📤 Enviar Solicitud';
+    });
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <a href="/pedidos" class="text-sm text-[#d4a843] hover:underline mb-4 inline-block">← Volver a ventas</a>
+
+    <div class="card-gol p-6">
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <h1 class="text-2xl font-bold">{{ pedido.folio }}</h1>
+                <p class="text-gray-500">{{ formatear_fecha(pedido.fecha) }} · {{ formatear_hora(pedido.hora) }}</p>
+            </div>
+            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">{{ pedido.metodo_ingreso }}</span>
+        </div>
+
+        <div class="mb-4">
+            <span class="text-sm text-gray-500">Cliente:</span>
+            <span class="font-medium">{{ pedido.cliente or 'Mostrador' }}</span>
+        </div>
+
+        <div class="mb-4">
+            <span class="text-sm text-gray-500">Registrado por:</span>
+            <span class="font-medium">{{ pedido.usuario.nombre if pedido.usuario else '—' }}</span>
+        </div>
+
+        <h2 class="font-semibold mb-2">Productos</h2>
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                    <th class="text-left px-3 py-2">Producto</th>
+                    <th class="text-right px-3 py-2">Cantidad</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for d in pedido.detalles %}
+                <tr>
+                    <td class="px-3 py-2">{{ icono_categoria(d.producto.categoria) }} {{ d.producto.nombre }}</td>
+                    <td class="px-3 py-2 text-right font-medium">{{ d.cantidad }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Botón "Solicitar modificación" para vendedores -->
+        {% if es_vendedor %}
+        <div class="mt-6 text-center">
+            <button onclick="abrirModalEdicion()" class="btn-outline text-sm">
+                ✏️ Solicitar modificación
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Solicitudes pendientes (solo para encargado/admin) -->
+    {% if es_encargado and solicitudes_pendientes %}
+    <div class="mt-6 card-gol p-6">
+        <h2 class="font-semibold mb-4">📝 Solicitudes de modificación pendientes</h2>
+        {% for s in solicitudes_pendientes %}
+        <div class="border border-yellow-200 bg-yellow-50 rounded-xl p-4 mb-3">
+            <p class="text-sm text-gray-600 mb-2">
+                <strong>{{ s.solicitante.nombre if s.solicitante else '—' }}</strong> solicitó modificar
+                · {{ s.fecha_solicitud.strftime('%d/%m %H:%M') if s.fecha_solicitud else '' }}
+            </p>
+            <div class="mb-3">
+                {% set props = s.productos_json | from_json %}
+                {% for item in props %}
+                <span class="inline-block bg-white rounded px-2 py-0.5 text-xs mr-1 mb-1 border border-gray-200">
+                    {% set prod = productos | selectattr('id', 'equalto', item.id) | first %}
+                    {{ prod.nombre if prod else ('#' ~ item.id) }} × {{ item.cantidad }}
+                </span>
+                {% endfor %}
+            </div>
+            <div class="flex gap-2">
+                <form method="POST" action="/aprobaciones/{{ s.id }}/aprobar" class="inline"
+                      onsubmit="return confirm('¿Aprobar esta modificación?')">
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded-lg">✅ Aprobar</button>
+                </form>
+                <form method="POST" action="/aprobaciones/{{ s.id }}/rechazar" class="inline"
+                      onsubmit="return confirm('¿Rechazar esta modificación?')">
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg">❌ Rechazar</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal de edición -->
+<div id="modal-edicion" class="modal-overlay" onclick="if(event.target===this)cerrarModalEdicion()">
+    <div class="modal-content">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold">✏️ Solicitar modificación</h2>
+            <button onclick="cerrarModalEdicion()" class="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+        </div>
+        <p class="text-sm text-gray-500 mb-4">
+            Modifica los productos. Esta solicitud quedará pendiente de aprobación del encargado.
+        </p>
+
+        <!-- Carrito editor -->
+        <div id="edit-carrito-contenido" class="space-y-1 min-h-[100px] mb-4">
+            <p class="text-gray-400 text-center py-4">Sin productos</p>
+        </div>
+
+        <button id="btn-solicitar" onclick="enviarSolicitud()"
+                class="w-full btn-dorado font-semibold py-3">
+            📤 Enviar Solicitud
+        </button>
+    </div>
+</div>
+{% endblock %}

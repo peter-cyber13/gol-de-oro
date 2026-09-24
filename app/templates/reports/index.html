@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold">📊 Reportes</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/reportes/inventario-actual" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-3xl mb-2">📦</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Inventario actual</h3>
+            <p class="text-sm text-gray-500">Stock de todos los productos activos</p>
+        </a>
+        <a href="/reportes/pedidos" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-3xl mb-2">🧾</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Unidades despachadas</h3>
+            <p class="text-sm text-gray-500">Productos vendidos por período</p>
+        </a>
+        <a href="/reportes/compras" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-3xl mb-2">🛒</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Compras por período</h3>
+            <p class="text-sm text-gray-500">Compras a proveedores</p>
+        </a>
+        <a href="/reportes/diferencias" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-3xl mb-2">⚠️</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Diferencias de inventario</h3>
+            <p class="text-sm text-gray-500">Físico vs esperado</p>
+        </a>
+        <a href="/reportes/cierres" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-3xl mb-2">🔒</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Historial de cierres</h3>
+            <p class="text-sm text-gray-500">Todos los cierres realizados</p>
+        </a>
+        <a href="/pedidos" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-3xl mb-2">🛒</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Ventas por período</h3>
+            <p class="text-sm text-gray-500">Ver historial completo de ventas</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

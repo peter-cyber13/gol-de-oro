@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-lg mx-auto space-y-6">
+    <a href="/admin" class="text-sm text-[#d4a843] hover:underline mb-4 inline-block">← Admin</a>
+    <h1 class="text-2xl font-bold">💾 Backup y Restauración</h1>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="font-semibold mb-3">Crear backup</h2>
+        <form method="POST">
+            <input type="hidden" name="action" value="crear">
+            <button type="submit" class="btn-dorado" onclick="return confirm('¿Crear backup ahora?')">📥 Crear backup</button>
+        </form>
+        <p class="text-xs text-gray-400 mt-2">Se guarda en la carpeta <code>backups/</code> del servidor</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="font-semibold mb-3">Restaurar backup</h2>
+        <p class="text-sm text-red-600 mb-3">⚠️ Esto reemplazará TODOS los datos actuales</p>
+        <form method="POST">
+            <input type="hidden" name="action" value="restaurar">
+            <div class="flex gap-2">
+                <input type="text" name="archivo" placeholder="backups/goldeoro_20260923_010000.sql"
+                       class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <button type="submit" class="border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-50 text-sm"
+                        onclick="return confirm('⚠️ ¿Estás seguro? Esto eliminará todos los datos actuales y los reemplazará con el backup.')">
+                    Restaurar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold">⚙️ Panel de Administración</h1>
+
+    <!-- Usage bars -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+        <h2 class="font-semibold">📊 Uso del Plan Básico</h2>
+
+        <div>
+            <div class="flex justify-between text-sm mb-1">
+                <span>👤 Usuarios activos</span>
+                <span>{{ stats.usuarios }}/{{ stats.usuarios_max }}</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-[#d4a843] h-2.5 rounded-full" style="width: {{ stats.usuarios_pct }}%"></div>
+            </div>
+        </div>
+
+        <div>
+            <div class="flex justify-between text-sm mb-1">
+                <span>📦 Productos activos</span>
+                <span>{{ stats.productos }}/{{ stats.productos_max }}</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-[#d4a843] h-2.5 rounded-full" style="width: {{ stats.productos_pct }}%"></div>
+            </div>
+        </div>
+
+        <div class="text-sm text-gray-500">
+            📅 Historial visible: últimos {{ stats.historial_dias }} días
+        </div>
+    </div>
+
+    <!-- Quick links -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/admin/usuarios" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:border-[#d4a843] transition">
+            <h3 class="font-semibold">👤 Usuarios</h3>
+            <p class="text-sm text-gray-500">Crear, editar, desactivar</p>
+        </a>
+        <a href="/admin/productos" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:border-[#d4a843] transition">
+            <h3 class="font-semibold">📦 Productos</h3>
+            <p class="text-sm text-gray-500">Catálogo de productos</p>
+        </a>
+        <a href="/admin/suscripcion" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:border-[#d4a843] transition">
+            <h3 class="font-semibold">💳 Suscripción</h3>
+            <p class="text-sm text-gray-500">Estado y renovación</p>
+        </a>
+        <a href="/admin/backup" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:border-[#d4a843] transition">
+            <h3 class="font-semibold">💾 Backup</h3>
+            <p class="text-sm text-gray-500">Crear/restaurar backups</p>
+        </a>
+        <a href="/inventario/inicial" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:border-[#d4a843] transition">
+            <h3 class="font-semibold">📦 Carga inicial</h3>
+            <p class="text-sm text-gray-500">Inventario inicial</p>
+        </a>
+    </div>
+
+    {% if sub %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="font-semibold mb-3">💳 Estado de Suscripción</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div><span class="text-gray-500">Plan:</span> <span class="font-medium">{{ sub.plan|capitalize }}</span></div>
+            <div><span class="text-gray-500">Estado:</span>
+                <span class="font-medium {% if sub.estado == 'activa' %}text-green-600{% else %}text-red-600{% endif %}">
+                    {{ sub.estado|capitalize }}
+                </span>
+            </div>
+            <div><span class="text-gray-500">Inicio:</span> <span class="font-medium">{{ sub.fecha_inicio }}</span></div>
+            <div><span class="text-gray-500">Vence:</span> <span class="font-medium">{{ sub.fecha_vencimiento }}</span></div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

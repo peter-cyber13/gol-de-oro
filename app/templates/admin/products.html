@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">📦 Productos</h1>
+        <a href="/admin/productos/crear" class="btn-dorado text-sm">+ Nuevo producto</a>
+    </div>
+
+    <p class="text-sm text-gray-500">{{ stats.productos }}/{{ stats.productos_max }} productos activos</p>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                    <th class="text-left px-4 py-3">Producto</th>
+                    <th class="text-left px-4 py-3">Categoría</th>
+                    <th class="text-left px-4 py-3">Unidad</th>
+                    <th class="text-left px-4 py-3">Frecuencia</th>
+                    <th class="text-center px-4 py-3">Activo</th>
+                    <th class="text-center px-4 py-3"></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for p in productos %}
+                <tr class="hover:bg-gray-50 {% if not p.activo %}opacity-60{% endif %}">
+                    <td class="px-4 py-3 font-medium">{{ icono_categoria(p.categoria) }} {{ p.nombre }}</td>
+                    <td class="px-4 py-3">{{ p.categoria }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ p.unidad_medida }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ p.frecuencia_inventario }}</td>
+                    <td class="px-4 py-3 text-center">{% if p.activo %}✅{% else %}❌{% endif %}</td>
+                    <td class="px-4 py-3 text-center">
+                        <a href="/admin/productos/{{ p.id }}/editar" class="text-[#d4a843] hover:underline text-sm">Editar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

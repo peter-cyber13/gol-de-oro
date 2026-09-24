@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <a href="/reportes" class="text-sm text-[#d4a843] hover:underline">← Reportes</a>
+    <h1 class="text-2xl font-bold">⚠️ Diferencias de Inventario</h1>
+
+    <form method="GET" class="flex gap-2 items-center flex-wrap">
+        <input type="date" name="desde" value="{{ desde }}">
+        <input type="date" name="hasta" value="{{ hasta }}">
+        <button type="submit" class="btn-dorado text-sm py-2">Consultar</button>
+    </form>
+
+    {% if diferencias %}
+    <div class="card-gol">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                    <th class="text-left px-4 py-3">Fecha</th>
+                    <th class="text-left px-4 py-3">Producto</th>
+                    <th class="text-right px-4 py-3">Esperado</th>
+                    <th class="text-right px-4 py-3">Físico</th>
+                    <th class="text-right px-4 py-3">Diferencia</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for d in diferencias %}
+                <tr class="{% if d.diferencia < 0 %}bg-red-50{% elif d.diferencia > 0 %}bg-green-50{% endif %}">
+                    <td class="px-4 py-3">{{ d.fecha }}</td>
+                    <td class="px-4 py-3 font-medium">{{ d.producto }}</td>
+                    <td class="px-4 py-3 text-right">{{ d.esperado }}</td>
+                    <td class="px-4 py-3 text-right">{{ d.fisico }}</td>
+                    <td class="px-4 py-3 text-right font-bold {% if d.diferencia < 0 %}text-red-600{% else %}text-green-600{% endif %}">
+                        {{ d.diferencia }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="bg-white rounded-xl p-8 text-center border border-gray-200"><p class="text-gray-400">✅ Sin diferencias en este período</p></div>
+    {% endif %}
+</div>
+{% endblock %}

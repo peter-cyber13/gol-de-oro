@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍺 Gol de Oro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dorado: { DEFAULT: '#d4a843', light: '#e0b85c', dark: '#b8922e' },
+                        verdeolivo: '#7a9a5a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #fefcf3 0%, #faf5e8 50%, #f0f0e0 100%);
+        }
+        .btn-dorado {
+            background: linear-gradient(135deg, #d4a843, #e0b85c);
+            color: white; padding: 0.5rem 1rem; border-radius: 0.5rem;
+            transition: all 0.2s; font-weight: 600;
+        }
+        .btn-dorado:hover { background: linear-gradient(135deg, #b8922e, #d4a843); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212, 168, 67, 0.3); }
+        .btn-outline { border: 2px solid #d4a843; color: #d4a843; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; }
+        .btn-outline:hover { background: #d4a843; color: white; transform: translateY(-1px); }
+        .text-dorado { color: #d4a843; }
+        .bg-dorado { background: linear-gradient(135deg, #d4a843, #c99a33); }
+        .bg-dorado-light { background: #e0b85c; }
+        .border-dorado { border-color: #d4a843; }
+        .card-gol {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid rgba(212, 168, 67, 0.15);
+            transition: all 0.25s ease;
+        }
+        .card-gol:hover {
+            box-shadow: 0 8px 30px rgba(212, 168, 67, 0.12);
+            border-color: rgba(212, 168, 67, 0.4);
+            transform: translateY(-2px);
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.85); transition: all 0.2s;
+            padding: 0.25rem 0.5rem; border-radius: 0.375rem; white-space: nowrap;
+        }
+        .nav-link:hover { color: white; background: rgba(255,255,255,0.15); }
+        .gradient-nav {
+            background: linear-gradient(135deg, #d4a843 0%, #c99a33 50%, #b8922e 100%);
+        }
+        .gradient-hero {
+            background: linear-gradient(135deg, rgba(212,168,67,0.08) 0%, rgba(122,154,90,0.08) 100%);
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="text-[#3a3a3a] min-h-screen flex flex-col">
+    <nav class="gradient-nav text-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-4 py-2.5 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 text-xl font-bold">
+                <img src="/static/logo-gol-de-oro.jpg" alt="Gol de Oro"
+                     class="h-8 w-8 rounded-full object-cover shadow-sm">
+                Gol de Oro
+            </a>
+            <div class="flex items-center gap-3 text-sm">
+                {% if current_user.is_authenticated %}
+                    <span class="hidden sm:inline text-white/80">{{ current_user.nombre }} <span class="text-white/60">({{ current_user.rol }})</span></span>
+                    {% if no_leidas is defined and no_leidas > 0 %}
+                        <a href="/notificaciones" class="relative">
+                            🔔
+                            <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">{{ no_leidas }}</span>
+                        </a>
+                    {% endif %}
+                    <a href="/logout" class="nav-link">Cerrar sesión</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {% if current_user.is_authenticated %}
+    <div class="bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-2 flex gap-1 text-sm overflow-x-auto">
+            <a href="/" class="nav-link !text-gray-600 hover:!text-[#d4a843] hover:!bg-yellow-50 !rounded-lg">🏠 Inicio</a>
+            <a href="/pedidos/nuevo" class="nav-link !text-gray-600 hover:!text-[#d4a843] hover:!bg-yellow-50 !rounded-lg">🛒 Nueva Venta</a>
+            <a href="/pedidos" class="nav-link !text-gray-600 hover:!text-[#d4a843] hover:!bg-yellow-50 !rounded-lg">📋 Ventas</a>
+            <a href="/inventario/diario" class="nav-link !text-gray-600 hover:!text-[#d4a843] hover:!bg-yellow-50 !rounded-lg">📊 Inventario</a>
+            {% if current_user.rol in ('admin', 'encargado') %}
+                <a href="/compras/nueva" class="nav-link !text-gray-600 hover:!text-[#d4a843] hover:!bg-yellow-50 !rounded-lg">🛒 Compras</a>
+                <a href="/cierre" class="nav-link !text-gray-600 hover:!text-[#d4a843] hover:!bg-yellow-50 !rounded-lg">🔒 Cierre</a>
+                <a href="/aprobaciones" class="nav-link !text-gray-600 hover:!text-[#d4a843] hover:!bg-yellow-50 !rounded-lg">📝 Aprobaciones</a>
+                <a href="/reportes" class="nav-link !text-gray-600 hover:!text-[#d4a843] hover:!bg-yellow-50 !rounded-lg">📊 Reportes</a>
+            {% endif %}
+            {% if current_user.rol == 'admin' %}
+                <a href="/admin" class="nav-link !text-gray-600 hover:!text-[#d4a843] hover:!bg-yellow-50 !rounded-lg">⚙️ Admin</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-6">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-4 px-4 py-3 rounded-xl {% if category == 'error' %}bg-red-50 text-red-700 border border-red-200{% elif category == 'success' %}bg-green-50 text-green-700 border border-green-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="text-center text-gray-400 text-xs py-4 border-t border-gray-200 bg-white/50">
+        <div class="flex items-center justify-center gap-1.5 mb-1">
+            <span>Desarrollado por</span>
+            <a href="https://fastdatasys.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1 text-[#d4a843] hover:text-[#b8922e] transition-colors">
+                <span class="font-semibold">Fast Data Systems</span>
+                <img src="/static/fds-icon-hexagonal.svg" alt="FDS" class="h-5 w-5 inline-block">
+            </a>
+        </div>
+        © {{ now_year }} Gol de Oro · Sistema de Inventario
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

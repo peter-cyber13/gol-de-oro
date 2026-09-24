@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Hexágono regular centrado en (50,50) con radio 44 -->
+  <!-- Puntos: (50,6) (88,28) (88,72) (50,94) (12,72) (12,28) -->
+  <polygon points="50,6 88,28 88,72 50,94 12,72 12,28"
+           fill="#1e6f7a" stroke="#38b6c6" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Líneas radiales del nodo central (50,50) hacia 5 nodos periféricos -->
+  <g stroke="#bdeef4" stroke-width="2.2" stroke-linecap="round">
+    <line x1="50" y1="50" x2="50" y2="22"/>
+    <line x1="50" y1="50" x2="77" y2="36"/>
+    <line x1="50" y1="50" x2="77" y2="72"/>
+    <line x1="50" y1="50" x2="23" y2="72"/>
+    <line x1="50" y1="50" x2="23" y2="36"/>
+  </g>
+  <!-- Nodos periféricos (círculos pequeños, teal claro/blanco) -->
+  <g fill="#d7f6f9" stroke="#38b6c6" stroke-width="1">
+    <circle cx="50" cy="22" r="5"/>
+    <circle cx="77" cy="36" r="5"/>
+    <circle cx="77" cy="72" r="5"/>
+    <circle cx="23" cy="72" r="5"/>
+    <circle cx="23" cy="36" r="5"/>
+  </g>
+  <!-- Nodo central (más grande, teal luminoso) -->
+  <circle cx="50" cy="50" r="8" fill="#38b6c6" stroke="#d7f6f9" stroke-width="1.5"/>
+</svg>

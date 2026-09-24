@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <h1 class="text-2xl font-bold">🔔 Notificaciones</h1>
+
+    {% if no_leidas > 0 %}
+    <p class="text-sm text-gray-500">Tienes {{ no_leidas }} notificaciones sin leer</p>
+    {% endif %}
+
+    {% if notificaciones %}
+    <div class="space-y-2">
+        {% for n in notificaciones %}
+        <div class="bg-white rounded-xl shadow-sm border {% if not n.leida %}border-[#d4a843]{% else %}border-gray-200{% endif %} p-4 flex justify-between items-start">
+            <div>
+                <p class="text-sm {% if not n.leida %}font-medium{% endif %}">{{ n.mensaje }}</p>
+                <p class="text-xs text-gray-400 mt-1">{{ n.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</p>
+            </div>
+            {% if not n.leida %}
+            <form method="POST" action="/notificaciones/{{ n.id }}/leer">
+                <button type="submit" class="text-xs text-[#d4a843] hover:underline">✓ Marcar leída</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-xl p-8 text-center border border-gray-200">
+        <p class="text-gray-400">🔔 Sin notificaciones</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

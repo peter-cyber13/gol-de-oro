@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <h1 class="text-2xl font-bold">📊 Inventario Diario</h1>
+    <p class="text-gray-500">{{ formatear_fecha(fecha) }} · {{ inventariados }}/{{ total_productos }} productos contados</p>
+
+    <form method="GET" class="flex gap-2 items-center">
+        <label class="text-sm text-gray-600">Fecha:</label>
+        <input type="date" name="fecha" value="{{ fecha }}"
+               class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4a843]"
+               onchange="this.form.submit()">
+        <a href="/inventario/diario" class="text-sm text-[#d4a843] hover:underline">Hoy</a>
+    </form>
+
+    <div class="card-gol">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                    <th class="text-left px-4 py-3">Producto</th>
+                    <th class="text-left px-4 py-3">Categoría</th>
+                    <th class="text-right px-4 py-3">Esperado</th>
+                    <th class="text-right px-4 py-3">Físico</th>
+                    <th class="text-right px-4 py-3">Diferencia</th>
+                    <th class="text-center px-4 py-3">Acción</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for d in inventario_data %}
+                <tr class="{% if d.diferencia is not none and d.diferencia != 0 %}bg-yellow-50{% endif %}">
+                    <td class="px-4 py-3 font-medium">{{ icono_categoria(d.producto.categoria) }} {{ d.producto.nombre }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ d.producto.categoria }}</td>
+                    <td class="px-4 py-3 text-right">{{ d.esperado }}</td>
+                    <td class="px-4 py-3 text-right font-medium">
+                        {% if d.diario %}
+                            {{ d.diario.cantidad_fisica }}
+                        {% else %}
+                            <span class="text-red-400">Pendiente</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-right {% if d.diferencia and d.diferencia < 0 %}text-red-600{% elif d.diferencia and d.diferencia > 0 %}text-green-600{% endif %}">
+                        {{ d.diferencia if d.diferencia is not none else '—' }}
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <form method="POST" class="flex items-center justify-center gap-2">
+                            <input type="hidden" name="producto_id" value="{{ d.producto.id }}">
+                            <input type="number" name="cantidad_fisica" step="0.01" min="0"
+                                   value="{{ d.diario.cantidad_fisica if d.diario else '' }}"
+                                   placeholder="Cant."
+                                   class="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#d4a843]">
+                            <button type="submit" class="btn-dorado text-xs py-1.5 px-3">
+                                {% if d.diario %}Actualizar{% else %}Guardar{% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

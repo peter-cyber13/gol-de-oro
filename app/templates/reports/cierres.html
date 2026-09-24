@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <a href="/reportes" class="text-sm text-[#d4a843] hover:underline">← Reportes</a>
+    <h1 class="text-2xl font-bold">🔒 Historial de Cierres</h1>
+
+    <form method="GET" class="flex gap-2 items-center flex-wrap">
+        <input type="date" name="desde" value="{{ desde }}">
+        <input type="date" name="hasta" value="{{ hasta }}">
+        <button type="submit" class="btn-dorado text-sm py-2">Consultar</button>
+    </form>
+
+    {% if cierres %}
+    <div class="card-gol">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                    <th class="text-left px-4 py-3">Fecha</th>
+                    <th class="text-center px-4 py-3">Correctos</th>
+                    <th class="text-center px-4 py-3">Diferencias</th>
+                    <th class="text-center px-4 py-3">Notificado</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for c in cierres %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 font-medium">{{ formatear_fecha(c.fecha) }}</td>
+                    <td class="px-4 py-3 text-center text-green-600 font-medium">{{ c.productos_correctos }}</td>
+                    <td class="px-4 py-3 text-center {% if c.productos_con_diferencia > 0 %}text-red-600{% else %}text-gray-500{% endif %}">
+                        {{ c.productos_con_diferencia }}
+                    </td>
+                    <td class="px-4 py-3 text-center">{% if c.notificado_app %}✅{% else %}❌{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="bg-white rounded-xl p-8 text-center border border-gray-200"><p class="text-gray-400">Sin cierres registrados</p></div>
+    {% endif %}
+</div>
+{% endblock %}

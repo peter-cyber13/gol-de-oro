@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold">🏠 Panel Principal</h1>
+    <p class="text-gray-500">{{ formatear_fecha(today) }}</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="card-gol p-4 text-center">
+            <div class="text-3xl mb-2">🛒</div>
+            <div class="text-2xl font-bold text-[#d4a843]">{{ pedidos_hoy }}</div>
+            <div class="text-sm text-gray-500">Ventas hoy</div>
+        </div>
+        <div class="card-gol p-4 text-center">
+            <div class="text-3xl mb-2">📊</div>
+            <div class="text-2xl font-bold text-[#7a9a5a]">{{ inventario_hoy }}</div>
+            <div class="text-sm text-gray-500">Productos contados</div>
+        </div>
+        <div class="card-gol p-4 text-center">
+            <div class="text-3xl mb-2">🔒</div>
+            <div class="text-2xl font-bold">{% if tiene_cierre %}✅{% else %}⏳{% endif %}</div>
+            <div class="text-sm text-gray-500">Cierre de hoy</div>
+        </div>
+        <div class="card-gol p-4 text-center">
+            <div class="text-3xl mb-2">🔔</div>
+            <div class="text-2xl font-bold text-[#d4a843]">{{ no_leidas }}</div>
+            <div class="text-sm text-gray-500">Notificaciones</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <a href="/pedidos/nuevo" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-4xl mb-2">🛒</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Nueva Venta</h3>
+            <p class="text-sm text-gray-500">Registrar venta a un cliente</p>
+        </a>
+        <a href="/pedidos" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-4xl mb-2">📋</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Ventas del día</h3>
+            <p class="text-sm text-gray-500">Ver historial de ventas</p>
+        </a>
+        <a href="/inventario/diario" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-4xl mb-2">📊</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Inventario diario</h3>
+            <p class="text-sm text-gray-500">Conteo físico de productos</p>
+        </a>
+        {% if current_user.rol in ('admin', 'encargado') %}
+        <a href="/compras/nueva" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-4xl mb-2">🛒</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Nueva compra</h3>
+            <p class="text-sm text-gray-500">Registrar compra a proveedor</p>
+        </a>
+        <a href="/cierre" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-4xl mb-2">🔒</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Cierre diario</h3>
+            <p class="text-sm text-gray-500">Cerrar el día</p>
+        </a>
+        <a href="/reportes" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-4xl mb-2">📊</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Reportes</h3>
+            <p class="text-sm text-gray-500">Análisis y consultas</p>
+        </a>
+        {% endif %}
+        {% if current_user.rol == 'admin' %}
+        <a href="/admin" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-4xl mb-2">⚙️</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Administración</h3>
+            <p class="text-sm text-gray-500">Usuarios, productos, SAAS</p>
+        </a>
+        {% endif %}
+        <a href="/notificaciones" class="card-gol p-6 text-center hover:border-[#d4a843] transition block">
+            <div class="text-4xl mb-2">🔔</div>
+            <h3 class="font-semibold text-[#3a3a3a]">Notificaciones</h3>
+            <p class="text-sm text-gray-500">{% if no_leidas %}{{ no_leidas }} sin leer{% else %}Sin novedades{% endif %}</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

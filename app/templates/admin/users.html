@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">👤 Usuarios</h1>
+        <a href="/admin/usuarios/crear" class="btn-dorado text-sm">+ Nuevo usuario</a>
+    </div>
+
+    <p class="text-sm text-gray-500">{{ stats.usuarios }}/{{ stats.usuarios_max }} usuarios activos</p>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                    <th class="text-left px-4 py-3">Nombre</th>
+                    <th class="text-left px-4 py-3">Email</th>
+                    <th class="text-left px-4 py-3">Rol</th>
+                    <th class="text-center px-4 py-3">Activo</th>
+                    <th class="text-left px-4 py-3">Último acceso</th>
+                    <th class="text-center px-4 py-3"></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for u in usuarios %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 font-medium">{{ u.nombre }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ u.email }}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-0.5 rounded-full text-xs
+                            {% if u.rol == 'admin' %}bg-red-100 text-red-700
+                            {% elif u.rol == 'encargado' %}bg-blue-100 text-blue-700
+                            {% else %}bg-gray-100 text-gray-700{% endif %}">
+                            {{ u.rol }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-center">{% if u.activo %}✅{% else %}❌{% endif %}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ u.ultimo_acceso.strftime('%d/%m/%Y %H:%M') if u.ultimo_acceso else '—' }}</td>
+                    <td class="px-4 py-3 text-center">
+                        <a href="/admin/usuarios/{{ u.id }}/editar" class="text-[#d4a843] hover:underline text-sm">Editar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

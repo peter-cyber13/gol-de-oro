@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-4">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">📋 Compras</h1>
+        <a href="/compras/nueva" class="btn-dorado text-sm">+ Nueva compra</a>
+    </div>
+
+    <form method="GET" class="flex gap-2 items-center flex-wrap">
+        <label class="text-sm text-gray-600">Desde:</label>
+        <input type="date" name="desde" value="{{ desde or '' }}"
+               class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+        <label class="text-sm text-gray-600">Hasta:</label>
+        <input type="date" name="hasta" value="{{ hasta or '' }}"
+               class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+        <button type="submit" class="btn-dorado text-sm py-2">Filtrar</button>
+    </form>
+
+    {% if compras %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                    <th class="text-left px-4 py-3">Fecha</th>
+                    <th class="text-left px-4 py-3">Proveedor</th>
+                    <th class="text-left px-4 py-3">Folio</th>
+                    <th class="text-left px-4 py-3">Productos</th>
+                    <th class="text-left px-4 py-3">Registró</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for c in compras %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3">{{ c.fecha }}</td>
+                    <td class="px-4 py-3 font-medium">{{ c.proveedor or '—' }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ c.folio_compra or '—' }}</td>
+                    <td class="px-4 py-3">
+                        {% for d in c.detalles %}
+                            <span class="inline-block bg-gray-100 rounded px-2 py-0.5 text-xs mr-1">
+                                {{ d.producto.nombre }} × {{ d.cantidad }}
+                            </span>
+                        {% endfor %}
+                    </td>
+                    <td class="px-4 py-3 text-gray-500">{{ c.usuario.nombre if c.usuario else '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="bg-white rounded-xl p-8 text-center border border-gray-200">
+        <p class="text-gray-400 text-lg">🛒 Sin compras registradas</p>
+        <a href="/compras/nueva" class="btn-dorado inline-block mt-4">Registrar primera compra</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
