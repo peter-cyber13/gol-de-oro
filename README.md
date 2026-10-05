@@ -88,5 +88,15 @@ docker compose up -d
 
 ---
 
-**HEAD:** [`65e78d4`](https://github.com/peter-cyber13/gol-de-oro/commit/65e78d4) (2026-09-25)
-**Última actualización:** 2026-10-05
+## 📋 Control de versiones
+
+| Fecha | Commit | Descripción |
+|---|---|---|
+| 2026-10-05 | [`a6c4e85`](https://github.com/peter-cyber13/gol-de-oro/commit/a6c4e85) | Docs: README con stack actual, estructura y cambios recientes |
+| 2026-09-25 | [`65e78d4`](https://github.com/peter-cyber13/gol-de-oro/commit/65e78d4) | Fix: remover credenciales DB hardcodeadas, usar env vars + psycopg2 |
+| 2026-09-25 | [`956a806`](https://github.com/peter-cyber13/gol-de-oro/commit/956a806) | 🎯 MVP — ajustes UX: logo, aprobaciones, footer FDS, cierre diario |
+
+---
+
+**HEAD:** [`a6c4e85`](https://github.com/peter-cyber13/gol-de-oro/commit/a6c4e85) (2026-10-05)
+**Inicio:** 2026-09-25 · **Última actualización:** 2026-10-05 | # commits: 3
